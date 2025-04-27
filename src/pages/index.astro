@@ -14,7 +14,7 @@ const posts = await getLatestPosts({ perPage: 3 });
 			<div class="text-xl max-w-2xl mx-auto" set:html={content} />
 		</div>
 	</section>
-	<section class="container mx-auto px-4 py-12">
+	<section class="container mx-auto px-4 py-11">
 		<h2 class="text-3xl font-bold mb-8 text-center">Ultimos articulos</h2>
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 			{posts.map((posts) => <GameCard {...posts} />)}
