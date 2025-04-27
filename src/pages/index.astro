@@ -1,11 +1,23 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import GameCard from "../components/GameCard.astro";
+import Layout from "../layouts/Layout.astro";
+import { getPageInfo, getLatestPosts } from "../lib/wp";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const { title, content } = await getPageInfo("pagina-de-inicio");
+const posts = await getLatestPosts({ perPage: 3 });
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="GameHub - Tu web de noticias">
+	<section class="bg-black text-white py-20">
+		<div class="container mx-auto px-4 text-center">
+			<h1 class="text-5xl font-bold mb-6">{title}</h1>
+			<div class="text-xl max-w-2xl mx-auto" set:html={content} />
+		</div>
+	</section>
+	<section class="container mx-auto px-4 py-12">
+		<h2 class="text-3xl font-bold mb-8 text-center">Ultimos articulos</h2>
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			{posts.map((posts) => <GameCard {...posts} />)}
+		</div>
+	</section>
 </Layout>

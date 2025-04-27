@@ -1,0 +1,22 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getPostInfo, getAllPostsSlugs } from "../../lib/wp";
+
+const slug = Astro.params.slug;
+if (!slug) return Astro.redirect("/404");
+
+export async function getStaticPaths() {
+    const slugs = await getAllPostsSlugs();
+    console.log(slugs);
+    return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { title, content, seo } = await getPostInfo(slug);
+---
+
+<Layout title={title} description={seo.description}>
+    <article class="prose max-w-2xl mx-auto">
+        <h1>{title}</h1>
+        <div set:html={content} />
+    </article>
+</Layout>
