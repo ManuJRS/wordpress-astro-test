@@ -2,7 +2,10 @@
 import Layout from "../../layouts/Layout.astro";
 import { getPostInfo, getAllPostsSlugs } from "../../lib/wp";
 
-const slug = Astro.params.slug;
+interface Props {
+    slug: string;
+}
+const { slug } = Astro.params as Props;
 if (!slug) return Astro.redirect("/404");
 
 export async function getStaticPaths() {

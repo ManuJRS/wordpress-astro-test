@@ -11,14 +11,14 @@ export const getPageInfo = async (slug: string) => {
     return { title, content }
 }
 
-export const getAllPostsSlugs = async () => {
+export const getAllPostsSlugs = async (): Promise<string[]> => {
     const response = await fetch(`${apiUrl}/posts?per_page=100`)
     if (!response.ok) throw new Error("Error en el fetching de data");
 
     const results = await response.json()
     if (!results.length) throw new Error("No se encontraron posts")
 
-    const slugs = results.map((post) => post.slug)
+    const slugs = results.map((post: { slug: string }) => post.slug);
     return slugs
 }
 
@@ -32,24 +32,36 @@ export const getPostInfo = async (slug: string) => {
     return { title, content, seo }
 }
 
-export const getLatestPosts = async ({ perPage = 10 }: { perPage?: number } = {}) => {
-    const response = await fetch(`${apiUrl}/posts?per_page=${perPage}&_embed`)
-    if (!response.ok) throw new Error("Error en el fetching de data")
+type WPPost = {
+    title: { rendered: string };
+    excerpt: { rendered: string };
+    content: { rendered: string };
+    date: string;
+    slug: string;
+    _embedded: {
+        'wp:featuredmedia': Array<{ source_url: string }>;
+    };
+};
 
-    const results = await response.json()
+export const getLatestPosts = async ({ perPage = 10 }: { perPage?: number } = {}) => {
+    const response = await fetch(`${apiUrl}/posts?per_page=${perPage}&_embed`);
+    if (!response.ok) throw new Error("Error en el fetching de data");
+
+    const results: WPPost[] = await response.json();
     if (!results.length) throw new Error("No hay posts para mostrar");
 
-    const posts = results.map(post => {
-        const title = post.title.rendered
-        const excerpt = post.excerpt.rendered
-        const content = post.content.rendered
-        const { date, slug } = post
+    const posts = results.map((post) => {
+        const title = post.title.rendered;
+        const excerpt = post.excerpt.rendered;
+        const content = post.content.rendered;
+        const { date, slug } = post;
 
-        const feturedImage = post._embedded['wp:featuredmedia'][0].source_url
+        const feturedImage = post._embedded['wp:featuredmedia'][0].source_url;
 
-        return { title, excerpt, content, date, slug, feturedImage }
-    })
+        return { title, excerpt, content, date, slug, feturedImage };
+    });
 
-    return posts
-}
+    return posts;
+};
+
 
